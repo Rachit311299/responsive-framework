@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Get the current breakpoint name
-    String screenSizeName = ResponsiveBreakpoints.of(context).breakpoint?.name ?? 'Unknown';
+    String screenSizeName = ResponsiveBreakpoints.of(context).breakpoint.name ?? 'Unknown';
 
     // Determine whether to show the sidebar based on breakpoint
     bool showSidebar = ResponsiveBreakpoints.of(context).largerThan(TABLET);
