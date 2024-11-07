@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:respo/layouts/desktop_layout.dart';
+import 'package:respo/layouts/mobile_layout.dart';
+import 'package:respo/layouts/tablet_layout.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'home_page.dart';
 
 void main() {
-  runApp(MyResponsiveApp());
+  runApp(const ResponsiveApp());
 }
 
-class MyResponsiveApp extends StatelessWidget {
+class ResponsiveApp extends StatelessWidget {
+  const ResponsiveApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      builder: (context, widget) => ResponsiveBreakpoints.builder(
-        child: widget!,
-        breakpoints: [
-          const Breakpoint(start: 0, end: 450, name: MOBILE),
-          const Breakpoint(start: 451, end: 800, name: TABLET),
-          const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-          const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-        ],
+      home: Scaffold(
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 600) {
+              // Mobile layout
+              return const MobileLayout();
+            } else if (constraints.maxWidth < 1200) {
+              // Tablet layout
+              return const TabletLayout();
+            } else {
+              // Desktop layout
+              return const DesktopLayout();
+            }
+          },
+        ),
       ),
-      home: HomePage(),
     );
   }
 }
