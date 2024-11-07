@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import 'package:respo/menus/bottom_nav_bar.dart';
+import 'package:respo/menus/side_bar.dart';
+import 'package:respo/menus/side_rail.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,92 +19,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the current breakpoint name
-    String screenSizeName = ResponsiveBreakpoints.of(context).breakpoint.name ?? 'Unknown';
+    double screenWidth = MediaQuery.sizeOf(context).width;
 
-    // Determine whether to show the sidebar based on breakpoint
-    bool showSidebar = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+    Widget navigation;
+    if (screenWidth < 600) {
+      navigation = BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      );
+    } else if (screenWidth < 1200) {
+      navigation = NavigationRailMenu(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      );
+
+    } else {
+      navigation = SidebarMenu(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Responsive App')),
+      appBar: AppBar(title: Text("Responsive UI using MediaQuery")),
       body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sidebar for larger screens
-          if (showSidebar)
-            Container(
-              width: 200,
-              child: buildSideNavigationRail(),
-            ),
-          // Main content area
+          // Sidebar
+          if (screenWidth >= 600) navigation,
+          // Filler Content
           Expanded(
             child: Center(
-              child: Text(
-                'Screen Size: $screenSizeName',
-                style: TextStyle(fontSize: 24),
-              ),
+              child: _selectedIndex == 0
+                  ? Text("Home Content")
+                  : Text("Settings Content"),
             ),
           ),
         ],
       ),
-      // Display bottom navigation bar only on smaller screens
-      bottomNavigationBar: showSidebar ? null : buildBottomNavigationBar(),
-    );
-  }
-
-  BottomNavigationBar buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-      ],
-    );
-  }
-
-  Widget buildSideNavigationRail() {
-    return Padding(
-      padding: EdgeInsets.zero,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            buildSidebarButton(Icons.home, 'Home', 0),
-            buildSidebarButton(Icons.search, 'Search', 1),
-            buildSidebarButton(Icons.settings, 'Settings', 2),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildSidebarButton(IconData icon, String label, int index) {
-    final Color selectedColor = Theme.of(context).primaryColor;
-    final Color unselectedColor = Colors.grey;
-
-    return Container(
-      alignment: Alignment.centerLeft,
-      child: TextButton.icon(
-        onPressed: () => _onItemTapped(index),
-        icon: Icon(
-          icon,
-          color: _selectedIndex == index ? selectedColor : unselectedColor,
-        ),
-        label: Text(
-          label,
-          style: TextStyle(
-            color: _selectedIndex == index ? selectedColor : unselectedColor,
-          ),
-        ),
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          alignment: Alignment.centerLeft,
-          minimumSize: Size(200, 50),
-        ),
-      ),
+      bottomNavigationBar: screenWidth < 600 ? navigation : null,
     );
   }
 }
