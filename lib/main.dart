@@ -1,35 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:respo/layouts/desktop_layout.dart';
-import 'package:respo/layouts/mobile_layout.dart';
-import 'package:respo/layouts/tablet_layout.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 
 void main() {
-  runApp(const ResponsiveApp());
+  runApp(const GalleryApp());
 }
 
-class ResponsiveApp extends StatelessWidget {
-  const ResponsiveApp({super.key});
+class GalleryApp extends StatelessWidget {
+  const GalleryApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Responsive Gallery',
       home: Scaffold(
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 600) {
-              // Mobile layout
-              return const MobileLayout();
-            } else if (constraints.maxWidth < 1200) {
-              // Tablet layout
-              return const TabletLayout();
-            } else {
-              // Desktop layout
-              return const DesktopLayout();
-            }
-          },
+        appBar: AppBar(title: const Text("Responsive Image Gallery")),
+        body: const Padding(
+          padding: EdgeInsets.only(left: 10, top: 10, bottom: 10, right: 10),
+          child: ResponsiveImageGrid(),
         ),
       ),
+    );
+  }
+}
+
+class ResponsiveImageGrid extends StatelessWidget {
+  const ResponsiveImageGrid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int columns;
+        if (constraints.maxWidth < 600) {
+          columns = 2;
+        } else if (constraints.maxWidth < 1000) {
+          columns = 3;
+        } else {
+          columns = 4;
+        }
+
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: 20,
+          itemBuilder: (context, index) {
+            return Container(
+              color: Colors.blue,
+              child: Center(
+                child: Text('Image ${index + 1}'),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
