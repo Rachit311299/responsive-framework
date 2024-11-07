@@ -1,25 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_framework/responsive_framework.dart';
-import 'home_page.dart';
 
 void main() {
-  runApp(MyResponsiveApp());
+  runApp(const GalleryApp());
 }
 
-class MyResponsiveApp extends StatelessWidget {
+class GalleryApp extends StatelessWidget {
+  const GalleryApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      builder: (context, widget) => ResponsiveBreakpoints.builder(
-        child: widget!,
-        breakpoints: [
-          const Breakpoint(start: 0, end: 450, name: MOBILE),
-          const Breakpoint(start: 451, end: 800, name: TABLET),
-          const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-          const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-        ],
+      title: 'Responsive Gallery',
+      home: Scaffold(
+        appBar: AppBar(title: const Text("Responsive Image Gallery")),
+        body: const Padding(
+          padding: EdgeInsets.only(left: 10, top: 10, bottom: 10, right: 10),
+          child: ResponsiveImageGrid(),
+        ),
       ),
-      home: HomePage(),
+    );
+  }
+}
+
+class ResponsiveImageGrid extends StatelessWidget {
+  const ResponsiveImageGrid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int columns;
+        if (constraints.maxWidth < 600) {
+          columns = 2;
+        } else if (constraints.maxWidth < 1000) {
+          columns = 3;
+        } else {
+          columns = 4;
+        }
+
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: 20,
+          itemBuilder: (context, index) {
+            return Container(
+              color: Colors.blue,
+              child: Center(
+                child: Text('Image ${index + 1}'),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
